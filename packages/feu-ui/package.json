@@ -24,6 +24,6 @@
     "chalk": "^5.0.0"
   },
   "dependencies": {
-    "feu-tools": "^0.0.2"
+    "bmlaoli-feu-tools": "^0.0.2"
   }
 }

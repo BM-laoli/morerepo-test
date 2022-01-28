@@ -1,6 +1,6 @@
 'use strict';
 
-const { add } = require('feu-tools');
+const { add } = require("bmlaoli-feu-tools");
 
 function ui(result) {
     console.log("ui库，result入参:", result);

@@ -1,5 +1,5 @@
 {
-  "name": "feu-tools",
+  "name": "bmlaoli-feu-tools",
   "version": "0.0.2",
   "description": "> TODO: description",
   "author": "joney <joney.s.li@newegg.com>",
@@ -19,5 +19,5 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "gitHead": "248d0eea30c63a785e3419eafd64831074b6edd0"
+  "gitHead": "dc37baaf163eb6bdce7dc8abdf70a11c1156d102"
 }

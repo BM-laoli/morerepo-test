@@ -21,7 +21,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "feu-tools": "^0.0.2",
+    "bmlaoli-feu-tools": "^0.0.2",
     "feu-ui": "^0.0.2"
   }
 }
