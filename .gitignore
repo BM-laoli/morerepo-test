@@ -1,0 +1,4 @@
+# compiled output
+/dist
+/packages/*/node_modules/*
+/node_modules/*
