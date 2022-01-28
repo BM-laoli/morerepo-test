@@ -2,5 +2,11 @@
   "packages": [
     "packages/*"
   ],
+  "command": {
+    "publish": {
+      "message": "chore:Publish-%v",
+      "registry": "https://registry.npmjs.org/"
+    }
+  },
   "version": "0.0.0"
 }
