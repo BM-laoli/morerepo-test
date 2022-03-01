@@ -233,6 +233,294 @@ await Promise.all([
 
 > 这个项目我们来把 之前lerna-p2p 分支的 三个React 项目合并一下，做成微前端的模式, ( 对于微前端的原理和底层实现以及 qiankun的分析，这里我们不扩张放到另一个专题去 ，这里只学习如何和lerna集成), 这里我们假设 p1是主应用，剩下的都是 子项目
 
+- 首先我们需要安装 qiankun  和 react-app-rewired +  customize-cra
+
+qiankun无需多言，那是必要加的 只需要进入主应用（子包p1）
+
+```shell
+yarn add qiankun
+```
+
+为什么需要 react-app-rewired +  customize-cra  ？ 因为我们要对webpakc的配置做修改，因为qiankun中的某些功能和生命周期需要依赖它 比如 “”的报错，就需要通过它来处理, 这个包只需要给子应用装就好了（子包p2，p3）
+
+```shell
+yarn add react-app-rewired customize-cra -D
+```
+
+- 然后我们需要为 子应用 和主应用配置启动端口，
+
+首先我们需要给子应用配置覆盖文件
+
+```js
+// 两个子应用用的配置是一样的，这里就不多写了
+const { name } = require('./package');
+const { override, } = require('customize-cra');
+const paths = require('react-scripts/config/paths');
+
+module.exports = {
+  webpack: override(
+    (config, env) => {
+      config.output.library = `${name}-[name]`;
+      config.output.libraryTarget = 'umd';
+      // config.output.jsonpFunction = `webpackJsonp_${name}`; // 这是一个create-react-app对接webpack5的一个open的Bug 还没有得到解决，但是目前使用起来是没有问题
+      config.output.globalObject = 'window';
+      return config;
+    },
+  ),
+};
+```
+
+```json
+// 主应用不需要配置什么 只需要指定端口
+  "scripts": {
+    "start": "PORT=3001 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+
+// 子应用不需要配置什么 需要配置启动项和端口
+  "scripts": {
+    "start": "GENERATE_SOURCEMAP=false PORT=3002 react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
+
+    "scripts": {
+    "start": "GENERATE_SOURCEMAP=false PORT=3003 react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
+```
+
+- 然后我们现在去配置 主应用 qinkun需要的配置项
+
+首先我们需要理解 一个概念就是 “挂载容器”，它是一个子应用挂载的dom容器，需要在主应用先把“坑占了”，研究了一下 qiankun提供的例子（<https://github1s.com/umijs/qiankun/blob/HEAD/examples/react16/package.json#L12-L15> ），可以看到，主应用在index.html 中放了下面几个div 做为入口（id为 subapp-container 的dom）
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>QianKun Example</title>
+</head>
+
+<body>
+  <div class="mainapp">
+    <!-- 标题栏 -->
+    <header class="mainapp-header">
+      <h1>QianKun</h1>
+    </header>
+    <div class="mainapp-main">
+      <!-- 侧边栏 -->
+      <ul class="mainapp-sidemenu">
+        <li onclick="push('/react16')">React16</li>
+        <li onclick="push('/react15')">React15</li>
+        <li onclick="push('/vue')">Vue</li>
+        <li onclick="push('/vue3')">Vue3</li>
+        <li onclick="push('/angular9')">Angular9</li>
+        <li onclick="push('/purehtml')">Purehtml</li>
+      </ul>
+      <!-- 子应用  -->
+      <main id="subapp-container"></main>
+    </div>
+  </div>
+
+  <script>
+    function push(subapp) { history.pushState(null, subapp, subapp) }
+  </script>
+</body>
+</html>
+```
+
+再看看它的子应用注册代码（注意观察 subapp-container 配置项值）
+
+```js
+
+registerMicroApps(
+  [
+    {
+      name: 'react16',
+      entry: '//localhost:7100',
+      container: '#subapp-viewport',
+      loader,
+      activeRule: '/react16',
+    },
+    {
+      name: 'react15',
+      entry: '//localhost:7102',
+      container: '#subapp-viewport',
+      loader,
+      activeRule: '/react15',
+    },
+    {
+      name: 'vue',
+      entry: '//localhost:7101',
+      container: '#subapp-viewport',
+      loader,
+      activeRule: '/vue',
+    },
+    {
+      name: 'angular9',
+      entry: '//localhost:7103',
+      container: '#subapp-viewport',
+      loader,
+      activeRule: '/angular9',
+    },
+    {
+      name: 'purehtml',
+      entry: '//localhost:7104',
+      container: '#subapp-viewport',
+      loader,
+      activeRule: '/purehtml',
+    },
+    {
+      name: 'vue3',
+      entry: '//localhost:7105',
+      container: '#subapp-viewport',
+      loader,
+      activeRule: '/vue3',
+    },
+  ],
+  {
+    beforeLoad: [
+      app => {
+        console.log('[LifeCycle] before load %c%s', 'color: green;', app.name);
+      },
+    ],
+    beforeMount: [
+      app => {
+        console.log('[LifeCycle] before mount %c%s', 'color: green;', app.name);
+      },
+    ],
+    afterUnmount: [
+      app => {
+        console.log('[LifeCycle] after unmount %c%s', 'color: green;', app.name);
+      },
+    ],
+  },
+);
+```
+
+我们分析了 每个配置项中 container 的id，由此可见，只需要在index.html中放多个带有id的特定的div容器，就能实现同页面多app载入，于是我在p1 主应用的index.html写了下面的代码，并且注册代码如下
+
+```html
+    <div id="root"></div>
+    <hr>
+    <div id="micro-app1" ></div>
+    <hr>
+    <div id="micro-app2" ></div>
+```
+
+```tsx
+// MicroApps bootstrap 主App
+import { registerMicroApps, start } from 'qiankun';
+registerMicroApps([
+  {
+    name: 'p2', // app name registered
+    entry: '//localhost:3002',
+    container: '#micro-app1',
+    activeRule: '/app2',
+  },
+  {
+    name: 'p3',
+    entry: '//localhost:3003',
+    container: '#micro-app2',
+    activeRule: '/app2',
+  },
+]);
+start();
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+```
+
+- 去配置我们子应用
+
+这一步我们只需要配置 entry入口导出几个生命周期就好了
+
+```tsx
+// 我只列出了一项目 实际上两个文件是类似的，你应该学会举一反三
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+/**
+ * bootstrap 只会在微应用初始化的时候调用一次，下次微应用重新进入时会直接调用 mount 钩子，不会再重复触发 bootstrap。
+ * 通常我们可以在这里做一些全局变量的初始化，比如不会在 unmount 阶段被销毁的应用级别的缓存等。
+ */
+ export async function bootstrap() {
+  console.log('react app bootstraped');
+}
+
+/**
+ * 应用每次进入都会调用 mount 方法，通常我们在这里触发应用的渲染方法
+ */
+export async function mount(props:any) {
+  ReactDOM.render(<App />, props.container ? props.container.querySelector('#micro-app1-root') : document.getElementById('micro-app1-root'));
+}
+
+/**
+ * 应用每次 切出/卸载 会调用的方法，通常在这里我们会卸载微应用的应用实例
+ */
+export async function unmount(props:any) {
+  ReactDOM.unmountComponentAtNode(
+    props.container ? props.container.querySelector('#micro-app1-root') : document.getElementById('micro-app1-root'),
+  );
+}
+
+function render() {
+  ReactDOM.render(<React.StrictMode><App /></React.StrictMode>, document.getElementById('micro-app1-root'));
+}
+
+render();
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+
+```
+
+别启动哈，你还没有配置完，注意看你的节点，micro-app1-root，我们去把原来的dom给改了
+p2/public/index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="micro-app1-root"></div>
+  </body>
+</html>
+
+```
+
+- 最后你只需要依次（先启动主应用然后启动子应用 ）启动它就好了，非常的简单
+浏览器输入 /app2  就能发现两个都载入了
+
 ### 关于其他
 
 2. 关于公共的 共享的 东西，我们可以放在pack同级别下，让它成为一个独立的包，然后进行 ：相互关联 （但是我认为还是分治的原则，如果你确定多个项目只是小部分的依赖，为什么不放到component-lib中去呢？，退一步说如果你想 进行 project-（）

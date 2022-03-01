@@ -13,12 +13,12 @@ registerMicroApps([
     container: '#micro-app1',
     activeRule: '/app2',
   },
-  // {
-  //   name: 'reactMicroApp2',
-  //   entry: { scripts: ['//localhost:3003/main.js'] },
-  //   container: '#reactMicroApp2',
-  //   activeRule: '/yourActiveRule2',
-  // },
+  {
+    name: 'p3',
+    entry: '//localhost:3003',
+    container: '#micro-app2',
+    activeRule: '/app2',
+  },
 ]);
 start();
 
