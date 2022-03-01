@@ -1,5 +1,5 @@
 import React from 'react';
-import Alert from '../../Alert/';
+import Alert from '../../Alert/index';
 import '../style';
 
-export default () => <Alert kind="warning">这是一条警告提示</Alert>;
+export default () => <Alert kind="info">我是你大爷</Alert>;

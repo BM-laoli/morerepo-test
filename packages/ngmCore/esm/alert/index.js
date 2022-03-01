@@ -20,9 +20,9 @@ var Alert = function Alert(_ref) {
   return /*#__PURE__*/React.createElement("div", _extends({
     className: prefixCls,
     style: {
-      background: kinds[kind]
+      backgroundColor: kinds[kind]
     }
-  }, rest), children);
+  }, rest), children, /*#__PURE__*/React.createElement("h1", null, "666"));
 };
 
 Alert.propTypes = {

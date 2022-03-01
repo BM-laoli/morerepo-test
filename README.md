@@ -11,7 +11,7 @@
   主要讲解了一个 function 类库的结构，类似于babel这种东西，虽然现在babel不用lerna了 哈哈哈，但是学习这种方式的lerna 对我们还是具备一定的借鉴意义的
 
 3. learn-workspace
-  这个分支中的例子 是lib 和project混合模式。 它解决了如下的问题：“一个同类型的项目使用lerna 包含 components-lib，tools-lib，project1（PC），project2（H5）”；事实上我并不是非常推荐这种开发方法，更推荐的开发方式是
+  这个分支中的例子 是lib 和project混合模式。 它解决了如下的问题：“一个同类型的项目使用lerna 包含 components-lib，tools-lib，project1（PC），project2（H5）”；事实上我并不是非常推荐这种开发方法，更推荐的开发方式是learn-project
 
 4. learn-project
  前面我们也说过，我个人是比较不喜欢 把lib 和项目用monorepo的方法组合起来，我更加推崇的是“分而治之”的理念， lib 和 project分开管理。你可以 建立一个大的组织比如，antd/pro-components，antd/mobile-components , antd/pc-components ，antd/tooks-funtion.....  这些库可以放在一个learn里； Porject1/Porject2/PorjectN 可以和某一个大的项目或者规划结合起来做monorepo ，举一个最适合的例子，我想说应该就要微前端了！
@@ -21,9 +21,6 @@
 ### only-learn
 
 这里可以直接链接到这个博客去看，我是一次性成功的哈哈哈；说一个坑，如果publish失败请手动 publish 到npm；另外需要说明的是我把里面的项目去掉了，因为我的理念是分治，把lib 和project分开
-
-<a herf="https://blog.csdn.net/weixin_39955351/article/details/109954005"> 类库开发实战 </a>
-<a herf="https://juejin.cn/post/6844903918279852046"> 类库开发实战2 </a>
 <a herf="https://juejin.cn/post/6844904194999058440#heading-34"> 类库开发实战2 </a>
 
 ### only-workspace
@@ -32,7 +29,7 @@
 
 #### React项目
 
-> p1 是一个最简单的React项目（TS项目）
+> p1 是一个最简单的React项目（TS项目）,
 
 具体的操作流程如下：
 
@@ -66,7 +63,7 @@ yarn create react-app my-app --template typescript
 
 #### ngmCore
 
-> 这个项目你可以看作是以一个 lib 依赖 一个组件库 多个项目共享的东西都可以挂在这里
+> 这个项目你可以看作是以一个 lib 依赖 一个组件库 多个项目共享的东西都可以挂在这里 ，这个components-lib我参考了这篇博客，也许对你会更有参考意义 <https://github.com/shanejix/shanejix.github.io/issues/76>
 
 ```shell
 mkdir src && cd src && touch index.ts # 新建源码文件夹以及入口文件
@@ -123,6 +120,58 @@ yarn add prop-types            # 运行时依赖，宿主环境可能不存在 �
 ```
 
 - 再接下来就能一点一点按照教程区爬就行了，然后就没有了其他的需要说明的了
+
+#### 整体控制
+
+> 前面我们把 package下的的东西基本上都配置好了，现在我们需要把 ，公共的Script和整体的eslint做好
+
+- 我们如何构建build 和script脚本
+
+  在这里我使用的nodejs  cli工具是 zxjs 谷歌爸爸开源的28k （官方文档是最好的老师）
+
+首先我们需要明确目标，我们现在需要两个 scirpt 一个是dev的另一个的build的
+
+./sciert/dev.mjs
+
+```js
+#!/usr/bin/env zx
+cd ("./packages/ngmCore")
+
+await Promise.all([
+  $`yarn dev`,
+  $`cd ../p1 && yarn start`,
+])
+
+```
+
+./sciert/build.mjs
+
+```js
+#!/usr/bin/env zx
+cd ("./packages/ngmCore")
+
+// 这里仅仅是build 构建，如果是需要构建成docker-image
+//  你可能需要结合实际的情况做CI/CD对接
+await $`yarn build`
+await $`cd ../p1 && yarn build`
+```
+
+对于packjson我们需要调整一下
+
+```json
+   "start": "chmod +x ./script/dev.mjs && zx ./script/dev.mjs",
+    "build": "chmod +x ./script/build.mjs && zx ./script/build.mjs",
+    "install": "lerna bootstrap --use-workspaces"
+```
+
+这样就好了
+
+- 我们现在再来看一个问题就是 eslint prettier committing 的问题
+
+由于我们是同仓库管理模式，所以 committing应该是一致的，eslint 和 prettier 应该和每一个子包相关连
+？待定
+
+####
 
 ### 关于其他
 

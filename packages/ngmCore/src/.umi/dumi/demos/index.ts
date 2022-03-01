@@ -12,6 +12,6 @@ export default {
       loader: async () => (await import(/* webpackChunkName: "demos_trelA" */'/Users/wcmismac020/Desktop/origin/lerna-repo/packages/ngmCore/src/Alert/demo/basic.tsx')).default,
       loading: () => null,
     }),
-    previewerProps: {"sources":{"_":{"tsx":rawCode1},"index.tsx":{"import":"../../Alert/","content":rawCode2},"style/index.ts":{"import":"../style","content":rawCode3},"style/index.less":{"import":"./index.less","content":rawCode4}},"dependencies":{"react":{"version":"17.0.2"},"prop-types":{"version":"15.8.1"}},"componentName":"Alert","identifier":"alert-basic"},
+    previewerProps: {"sources":{"_":{"tsx":rawCode1},"index.tsx":{"import":"../../Alert/index","content":rawCode2},"style/index.ts":{"import":"../style","content":rawCode3},"style/index.less":{"import":"./index.less","content":rawCode4}},"dependencies":{"react":{"version":"17.0.2"},"prop-types":{"version":"15.8.1"}},"componentName":"Alert","identifier":"alert-basic"},
   },
 };

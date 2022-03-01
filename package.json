@@ -5,9 +5,9 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "lerna run start --stream",
-    "build": "lerna run build --stream",
-    "bootstrap": "lerna bootstrap --use-workspaces"
+    "start": "chmod +x ./script/dev.mjs && zx ./script/dev.mjs",
+    "build": "chmod +x ./script/build.mjs && zx ./script/build.mjs",
+    "install": "lerna bootstrap --use-workspaces"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.0",

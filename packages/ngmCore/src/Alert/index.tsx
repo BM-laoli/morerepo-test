@@ -2,7 +2,7 @@ import React from 'react';
 import t from 'prop-types';
 
 export interface AlertProps {
-  kind?: 'info' | 'positive' | 'negative' | 'warning';
+  kind?: 'info' | 'positive' | 'negative' | 'warning' 
 }
 
 export type KindMap = Record<Required<AlertProps>['kind'], string>;
@@ -20,11 +20,12 @@ const Alert: React.FC<AlertProps> = ({ children, kind = 'info', ...rest }) => (
   <div
     className={prefixCls}
     style={{
-      background: kinds[kind],
+      backgroundColor: kinds[kind],
     }}
     {...rest}
   >
     {children}
+    <h1>666</h1>
   </div>
 );
 

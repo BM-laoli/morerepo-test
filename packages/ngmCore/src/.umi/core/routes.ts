@@ -68,7 +68,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "src/Alert/index.md",
-          "updatedTime": 1645514844480,
+          "updatedTime": 1645527389000,
           "componentName": "Alert",
           "title": "Alert 警告提示",
           "nav": {
@@ -114,7 +114,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/index.md",
-          "updatedTime": 1645514705079,
+          "updatedTime": 1645527389000,
           "title": "Happy UI",
           "hero": {
             "title": "Happy UI",

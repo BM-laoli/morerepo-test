@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <Alert kind="warning">这是一条警告提示</Alert>
+        <Alert kind="info">这是一条警告提示</Alert>
       </header>
     </div>
   );
