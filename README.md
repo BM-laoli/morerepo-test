@@ -171,7 +171,67 @@ await $`cd ../p1 && yarn build`
 由于我们是同仓库管理模式，所以 committing应该是一致的，eslint 和 prettier 应该和每一个子包相关连
 ？待定
 
-####
+### lerna-p2p
+
+> 这个分支主要是讨论如何在learn中实现 project and project集成, 回顾一下上面我们曾经有说明 这是我认为的比较好的nomorepo集成方式; 在这个例子中，我们有三个 React-PC 项目，他们是一个大项目中的子系统。关于架构，实际上我们可以拿微前端举个例子，但是这并不是在本次讨论的范围内，可以切换到另一个分支参考 lerna-qinkun-web
+
+这一块的话是非常非常的简单的，
+
+- 首先我们需要新建p1 - p3的react项目，
+
+这非常简单，但是我们这里不新建了，我们从原来的only-workspace checout -b 过来，然后把 p1中的ngmCore依赖删除，然后把ngmCore删除掉，最后把项目复制2份，注意要把子包的packagejson名字改对
+
+- 然后我们需要调整个项目的 script 脚本
+
+dev.mjs
+
+```js
+#!/usr/bin/env zx
+cd ("./packages/p1")
+
+await Promise.all([
+  $`yarn start`,
+  $`cd ../p2 && yarn start`,
+  $`cd ../p3 && yarn start`,
+])
+
+```
+
+build.mjs
+
+```js
+
+#!/usr/bin/env zx
+cd ("./packages/p1")
+
+// 这里仅仅是build 构建，如果是需要构建成docker-image
+//  你可能需要结合实际的情况做CI/CD对接
+
+await Promise.all([
+  $`yarn build`,
+  $`cd ../p2 && yarn build`,
+  $`cd ../p3 && yarn build`,
+])
+
+```
+
+- 最后由于 react-scripts start 默认启动的是3000，我们需要调整它
+  来到子包项目中，我们把 start 启动改成下面的样子
+
+```json
++++
+  "scripts": {
+    "start": "PORT=3002 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
++++
+```
+
+### lerna-qiankun-web
+
+> 这个项目我们来把 之前lerna-p2p 分支的 三个React 项目合并一下，做成微前端的模式, ( 对于微前端的原理和底层实现以及 qiankun的分析，这里我们不扩张放到另一个专题去 ，这里只学习如何和lerna集成), 这里我们假设 p1是主应用，剩下的都是 子项目
 
 ### 关于其他
 
