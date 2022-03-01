@@ -4,6 +4,24 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// MicroApps bootstrap 主App
+import { registerMicroApps, start } from 'qiankun';
+registerMicroApps([
+  {
+    name: 'p2', // app name registered
+    entry: '//localhost:3002',
+    container: '#micro-app1',
+    activeRule: '/app2',
+  },
+  // {
+  //   name: 'reactMicroApp2',
+  //   entry: { scripts: ['//localhost:3003/main.js'] },
+  //   container: '#reactMicroApp2',
+  //   activeRule: '/yourActiveRule2',
+  // },
+]);
+start();
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
