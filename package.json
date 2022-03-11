@@ -1,0 +1,19 @@
+{
+  "name": "pnpm-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "chmod +x ./script/dev.mjs && zx ./script/dev.mjs",
+    "build": "chmod +x ./script/build.mjs && zx ./script/build.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "zx": "^5.2.0"
+  }
+}
