@@ -1,7 +1,8 @@
 #!/usr/bin/env zx
-cd ("./packages/ngmCore")
+cd ("./packages/p1")
 
 await Promise.all([
-  $`yarn dev`,
-  $`cd ../p1 && yarn start`,
+  $`yarn start`,
+  $`cd ../p2 && yarn start`,
+  $`cd ../p3 && yarn start`,
 ])

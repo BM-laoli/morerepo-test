@@ -50,4 +50,10 @@ packages:
 
 ### ptp分支
 
-> 这个分支 主要是做了一个 project和 project 的混合 模式 ，以验证pnpm 可以做到诸如此类的功能，这里主要是把 morerepo-test的 qiankun项目拿过来
+> 这个分支 主要是做了一个 project和 project 的混合 模式 ，以验证pnpm 可以做到诸如此类的功能，这里主要是把  morerepo-test 的 qiankun项目拿过来
+
+实际上，对于pnpm来说非常的简单，只需要把 morerepo-test qiankun的 子包 cv到我们的packages下 ,然后保证script 脚本正常，在用pnpm install 在根目录安装一下就好了，之后就能直接run起来，非常的简单！
+
+## 结论
+
+> 相比之下 pnpm 还是香的，虽然不是银弹但是我希望它能最大限度的成为未来包管理的方式
